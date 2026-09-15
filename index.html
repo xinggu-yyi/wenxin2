@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>问心牌 · 灵根天赋测试</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2314101f'/%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%23c9a44b' stroke-width='2.5'/%3E%3Cpath d='M32 10 L32 54 M10 32 L54 32' stroke='%23c9a44b' stroke-width='1.5' opacity='0.5'/%3E%3Ctext x='32' y='41' font-size='22' font-family='serif' text-anchor='middle' fill='%23e8c97a' font-weight='bold'%3E问%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+<style>
+/* ===== 全局重置与变量 ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#c9a44b;--gold-light:#e8c97a;--gold-dark:#8a6d2b;
+  --cyan:#2d8b82;--cyan-light:#5ab5ac;
+  --red:#a63a2e;--red-light:#c85544;
+  --brown:#5c3a1e;--purple:#5a3a6b;
+  --bg-deep:#14101f;--bg-mid:#1e1830;--bg-card:rgba(30,24,48,0.72);
+  --text:#f0e8d8;--text-dim:#b8aE98;--text-muted:#8a7f6e;
+  --border-gold:rgba(201,164,75,0.3);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Noto Serif SC','Songti SC',serif;
+  background:var(--bg-deep);color:var(--text);
+  min-height:100vh;overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,164,75,0.12),transparent),
+    radial-gradient(ellipse 60% 40% at 80% 100%,rgba(45,139,130,0.1),transparent),
+    radial-gradient(ellipse 50% 30% at 10% 80%,rgba(166,58,46,0.08),transparent);
+}
+/* 敦煌纹样背景装饰 */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(201,164,75,0.015) 40px,rgba(201,164,75,0.015) 41px),
+    repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(45,139,130,0.015) 40px,rgba(45,139,130,0.015) 41px);
+}
+
+/* ===== 通用组件 ===== */
+.view{display:none;min-height:100vh;position:relative;z-index:1}
+.view.active{display:flex;flex-direction:column}
+.container{max-width:720px;margin:0 auto;padding:24px 20px;width:100%}
+.gold-text{color:var(--gold);text-shadow:0 0 12px rgba(201,164,75,0.4)}
+.cyan-text{color:var(--cyan-light)}
+.card{
+  background:var(--bg-card);
+  border:1px solid var(--border-gold);
+  border-radius:16px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(201,164,75,0.1);
+}
+.btn-gold{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 36px;border-radius:12px;
+  border:1.5px solid var(--gold);color:var(--gold-light);
+  background:linear-gradient(135deg,rgba(201,164,75,0.1),rgba(201,164,75,0.05));
+  font-family:inherit;font-size:18px;font-weight:600;letter-spacing:2px;
+  cursor:pointer;transition:all .3s ease;
+}
+.btn-gold:hover{background:linear-gradient(135deg,rgba(201,164,75,0.25),rgba(201,164,75,0.1));box-shadow:0 0 24px rgba(201,164,75,0.3);transform:translateY(-2px)}
+.btn-ghost{
+  padding:10px 20px;border-radius:10px;border:1px solid rgba(201,164,75,0.35);
+  color:var(--text-dim);background:rgba(201,164,75,0.05);
+  font-family:inherit;font-size:14px;cursor:pointer;transition:all .25s;
+}
+.btn-ghost:hover:not(:disabled){border-color:var(--gold);color:var(--gold-light)}
+.btn-ghost:disabled{opacity:0.3;cursor:not-allowed}
+
+/* ===== 首页 ===== */
+#view-home{align-items:center;justify-content:center;padding:40px 20px}
+.home-ornament{text-align:center;margin-bottom:32px}
+.home-ornament .seal{
+  display:inline-block;width:72px;height:72px;border-radius:50%;
+  border:2px solid var(--gold);position:relative;
+  background:radial-gradient(circle,rgba(201,164,75,0.15),transparent);
+}
+.home-ornament .seal::before,.home-ornament .seal::after{
+  content:'';position:absolute;background:var(--gold);
+}
+.home-ornament .seal::before{width:2px;height:24px;top:-28px;left:50%;transform:translateX(-50%)}
+.home-ornament .seal::after{width:24px;height:2px;left:-28px;top:50%;transform:translateY(-50%)}
+.home-title{font-size:clamp(36px,8vw,56px);font-weight:900;letter-spacing:12px;text-indent:12px;color:var(--gold-light);text-shadow:0 0 30px rgba(201,164,75,0.5),0 2px 8px rgba(0,0,0,0.6);margin-bottom:8px}
+.home-subtitle{font-size:clamp(16px,3vw,22px);color:var(--cyan-light);letter-spacing:6px;text-indent:6px;margin-bottom:40px}
+.home-card{max-width:560px;padding:36px 32px;text-align:center}
+.home-intro{font-size:16px;line-height:2.1;color:var(--text-dim);text-align:justify;margin-bottom:28px}
+.home-intro p{margin-bottom:12px}
+.home-intro .highlight{color:var(--gold-light);font-weight:600}
+.home-meta{font-size:13px;color:var(--text-muted);margin-top:24px;letter-spacing:1px}
+
+/* ===== 答题页 ===== */
+#view-quiz{padding-top:20px}
+.quiz-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.quiz-step{font-size:14px;color:var(--gold);letter-spacing:2px}
+.progress-wrap{width:100%;height:6px;background:rgba(201,164,75,0.12);border-radius:3px;overflow:hidden;margin-bottom:24px}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--gold-dark),var(--gold),var(--gold-light));border-radius:3px;transition:width .5s ease;box-shadow:0 0 10px rgba(201,164,75,0.5)}
+.question-card{padding:28px 24px;margin-bottom:20px}
+.question-title{font-size:clamp(17px,4vw,20px);line-height:1.8;color:var(--text);margin-bottom:24px;font-weight:600}
+.question-title .q-tag{display:inline-block;font-size:12px;color:var(--cyan-light);border:1px solid rgba(45,139,130,0.4);padding:2px 10px;border-radius:6px;margin-right:8px;vertical-align:middle}
+.option-list{display:flex;flex-direction:column;gap:12px}
+.option-item{
+  padding:16px 18px;border-radius:12px;cursor:pointer;
+  border:1px solid rgba(201,164,75,0.2);background:rgba(201,164,75,0.03);
+  transition:all .25s ease;font-size:15px;line-height:1.7;color:var(--text-dim);
+  display:flex;align-items:flex-start;gap:12px;
+}
+.option-item:hover{border-color:var(--gold);background:rgba(201,164,75,0.1);color:var(--text);transform:translateX(4px)}
+.option-item .opt-letter{
+  flex-shrink:0;width:28px;height:28px;border-radius:50%;
+  border:1px solid var(--border-gold);display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--gold);font-weight:700;
+}
+.option-item:hover .opt-letter{background:var(--gold);color:var(--bg-deep)}
+.quiz-nav{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+
+/* ===== 结果页 ===== */
+#view-result{padding-bottom:60px}
+.result-hero{text-align:center;padding:40px 20px 30px;position:relative}
+/* 灵根灵体 */
+.spirit-stage{position:relative;width:220px;height:280px;margin:0 auto 24px;display:flex;align-items:center;justify-content:center}
+.spirit-aura{
+  position:absolute;inset:-30px;border-radius:50%;
+  animation:auraPulse 3.5s ease-in-out infinite;pointer-events:none;
+}
+.spirit-body{
+  position:relative;width:140px;height:200px;border-radius:50% 50% 45% 45%;
+  opacity:0.55;animation:spiritFloat 5s ease-in-out infinite;
+  filter:blur(1px);
+}
+.spirit-body::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  background:inherit;filter:blur(20px);opacity:0.6;
+}
+.spirit-core{
+  position:absolute;width:60px;height:60px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.9),rgba(255,255,255,0.1));
+  animation:coreGlow 2.5s ease-in-out infinite;
+}
+@keyframes auraPulse{0%,100%{opacity:0.4;transform:scale(0.95)}50%{opacity:0.85;transform:scale(1.08)}}
+@keyframes spiritFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes coreGlow{0%,100%{opacity:0.7;transform:scale(0.9)}50%{opacity:1;transform:scale(1.15)}}
+
+.result-root-name{font-size:clamp(24px,5vw,32px);font-weight:900;color:var(--gold-light);letter-spacing:4px;text-shadow:0 0 20px rgba(201,164,75,0.5);margin-bottom:6px}
+.result-root-path{font-size:16px;color:var(--cyan-light);letter-spacing:3px;margin-bottom:4px}
+.result-root-rank{font-size:14px;color:var(--text-dim);letter-spacing:2px}
+
+.result-section{padding:24px;margin-bottom:16px}
+.result-section h3{
+  font-size:17px;color:var(--gold);letter-spacing:3px;margin-bottom:14px;
+  padding-bottom:10px;border-bottom:1px solid var(--border-gold);
+  display:flex;align-items:center;gap:10px;
+}
+.result-section h3::before{content:'';width:4px;height:16px;background:var(--gold);border-radius:2px}
+.result-section p{font-size:15px;line-height:1.9;color:var(--text-dim)}
+.result-section .field-label{color:var(--cyan-light);font-weight:600;margin-right:6px}
+
+/* 洛书牌局 */
+.luoshu-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto auto;
+  gap:10px;max-width:360px;margin:0 auto;position:relative;
+}
+.luoshu-cell{
+  aspect-ratio:3/4;border-radius:10px;padding:8px 6px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;border:1px solid var(--border-gold);
+  background:rgba(201,164,75,0.04);position:relative;overflow:hidden;
+}
+.luoshu-cell .card-series{font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-bottom:4px}
+.luoshu-cell .card-name{font-size:14px;font-weight:700;color:var(--gold-light);letter-spacing:1px}
+.luoshu-cell .card-meta{font-size:10px;color:var(--text-muted);margin-top:4px}
+.luoshu-cell.ji{border-color:rgba(201,164,75,0.5);background:rgba(201,164,75,0.08)}
+.luoshu-cell.xiong{border-color:rgba(166,58,46,0.4);background:rgba(166,58,46,0.06)}
+.luoshu-cell.ping{border-color:rgba(45,139,130,0.35);background:rgba(45,139,130,0.05)}
+.luoshu-center{grid-column:2;grid-row:2;background:rgba(90,58,107,0.15);border-color:rgba(90,58,107,0.4)}
+.luoshu-center .card-name{color:#c9a0d8}
+.luoshu-label{font-size:11px;color:var(--text-muted);text-align:center;margin-top:12px;letter-spacing:1px}
+
+/* 天赋条形图 */
+.talent-bars{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.talent-bar-row{display:flex;align-items:center;gap:10px}
+.talent-bar-label{width:80px;font-size:13px;color:var(--text-dim);flex-shrink:0;text-align:right}
+.talent-bar-track{flex:1;height:14px;background:rgba(201,164,75,0.08);border-radius:7px;overflow:hidden}
+.talent-bar-fill{height:100%;border-radius:7px;transition:width 1s ease;background:linear-gradient(90deg,var(--cyan),var(--gold))}
+.talent-bar-val{width:36px;font-size:12px;color:var(--gold);flex-shrink:0}
+
+/* 职业列表 */
+.career-list{display:flex;flex-direction:column;gap:10px}
+.career-item{padding:12px 14px;border-radius:10px;background:rgba(201,164,75,0.04);border:1px solid rgba(201,164,75,0.15)}
+.career-item .career-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.career-item .career-name{font-size:15px;font-weight:600;color:var(--text)}
+.career-item .career-score{font-size:13px;color:var(--gold)}
+.career-item .career-desc{font-size:13px;color:var(--text-muted);line-height:1.6}
+
+/* 页脚 */
+.footer-note{padding:20px;text-align:center;font-size:12px;color:var(--text-muted);line-height:1.8;letter-spacing:1px}
+.footer-note .brand{color:var(--gold);font-weight:600}
+
+/* 淡入动画 */
+.fade-in{animation:fadeInUp .6s ease-out forwards}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* 响应式 */
+@media(max-width:480px){
+  .container{padding:16px 14px}
+  .home-card{padding:24px 18px}
+  .question-card{padding:20px 16px}
+  .option-item{padding:12px 14px;font-size:14px}
+  .result-section{padding:18px 16px}
+  .spirit-stage{width:180px;height:230px}
+  .spirit-body{width:110px;height:160px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 视图：首页 ===== -->
+<section id="view-home" class="view active">
+  <div class="container" style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1">
+    <div class="home-ornament fade-in">
+      <div class="seal"></div>
+    </div>
+    <h1 class="home-title fade-in">问心牌</h1>
+    <p class="home-subtitle fade-in">灵根天赋测试</p>
+    <div class="card home-card fade-in">
+      <div class="home-intro">
+        <p>大千寰宇，道缘万千。凡尘俗世之中，你是否身负潜藏灵韵，等待觉醒？</p>
+        <p>此为<span class="highlight">问心牌</span>原创灵根试炼，以象数易学为根基，叩问本心，勘定你的先天灵根与修行道途。</p>
+        <p style="text-align:center;color:var(--gold-light);font-style:italic;margin-top:16px">—— 踏过凡尘，就此踏上仙途 ——</p>
+      </div>
+      <button class="btn-gold" onclick="startQuiz()">踏上仙途</button>
+      <div class="home-meta">共 7 道问道 · 约 3-5 分钟 · 答完即得灵根报告</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 视图：答题 ===== -->
+<section id="view-quiz" class="view">
+  <div class="container">
+    <div class="quiz-header">
+      <button class="btn-ghost" id="btn-prev" onclick="prevQuestion()" disabled>上一题</button>
+      <span class="quiz-step" id="quiz-step">第 1 / 7 问</span>
+      <span style="width:72px"></span>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+    <div class="card question-card fade-in" id="question-card">
+      <h2 class="question-title" id="question-title"></h2>
+      <div class="option-list" id="option-list"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 视图：结果 ===== -->
+<section id="view-result" class="view">
+  <div class="container">
+    <!-- 灵根灵体 -->
+    <div class="result-hero fade-in">
+      <div class="spirit-stage">
+        <div class="spirit-aura" id="spirit-aura"></div>
+        <div class="spirit-body" id="spirit-body"></div>
+        <div class="spirit-core"></div>
+      </div>
+      <div class="result-root-name" id="result-root-name"></div>
+      <div class="result-root-path" id="result-root-path"></div>
+      <div class="result-root-rank" id="result-root-rank"></div>
+    </div>
+
+    <!-- 灵根解读 -->
+    <div class="card result-section fade-in">
+      <h3>灵根解读</h3>
+      <p id="report-root"></p>
+    </div>
+
+    <!-- 先天慧根 -->
+    <div class="card result-section fade-in">
+      <h3>先天慧根</h3>
+      <p id="report-innate"></p>
+    </div>
+
+    <!-- 后天悟性 -->
+    <div class="card result-section fade-in">
+      <h3>后天悟性</h3>
+      <p id="report-acquired"></p>
+    </div>
+
+    <!-- 洛书牌局 -->
+    <div class="card result-section fade-in">
+      <h3>洛书牌局</h3>
+      <div class="luoshu-grid" id="luoshu-grid"></div>
+      <p class="luoshu-label">水宫·十二运 | 土宫·十二星 | 火宫·十二将 | 木宫·十二神 | 金宫·十二景</p>
+    </div>
+
+    <!-- 牌局人生 -->
+    <div class="card result-section fade-in">
+      <h3>牌局人生 · 性格定位</h3>
+      <p id="report-personality"></p>
+    </div>
+
+    <div class="card result-section fade-in">
+      <h3>牌局人生 · 天赋定位</h3>
+      <div class="talent-bars" id="talent-bars"></div>
+      <p id="report-talent" style="margin-top:14px"></p>
+    </div>
+
+    <div class="card result-section fade-in">
+      <h3>牌局人生 · 职业定位</h3>
+      <div class="career-list" id="career-list"></div>
+    </div>
+
+    <!-- 了解问心牌 -->
+    <div class="card result-section fade-in">
+      <h3>了解问心牌</h3>
+      <p>问心牌为本元严格按照中国象数易学设计的国风原创生涯咨询卡牌。画面古典神秘，使用简洁明快，是职业发展、生涯规划、心理咨询的有力工具。</p>
+      <p style="margin-top:10px">同频灵根交流 / 更多测试 / 线下活动<br>职业天赋 / 生涯发展咨询：buyaozhongduan</p>
+    </div>
+
+    <div style="text-align:center;margin:24px 0">
+      <button class="btn-gold" onclick="restart()">重新问道</button>
+    </div>
+    <div class="footer-note">
+      <span class="brand">问心牌</span> · 灵根天赋测试 · 以象数易学叩问本心
+    </div>
+  </div>
+</section>
+
+<script>
+/* ===== 60张牌完整数据 ===== */
+/* 地支:1子水 2丑土 3寅木 4卯木 5辰土 6巳火 7午火 8未土 9申金 10酉金 11戌土 12亥水 */
+/* 吉凶: ji=吉(1分) xiong=凶(0分) ping=平(0.5分) */
+const DIZHI = ['','子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const WUXING = ['','水','土','木','木','土','火','火','土','金','金','土','水'];
+const WUXING_COLOR = {
+  '金':'#c8cdd4','木':'#5ab870','水':'#5a9fd4','火':'#d45a3a','土':'#c9a44b'
+};
+const WUXING_AURA = {
+  '金':'radial-gradient(circle,rgba(200,205,212,0.5),rgba(200,205,212,0.05) 70%)',
+  '木':'radial-gradient(circle,rgba(90,184,112,0.5),rgba(90,184,112,0.05) 70%)',
+  '水':'radial-gradient(circle,rgba(90,159,212,0.5),rgba(90,159,212,0.05) 70%)',
+  '火':'radial-gradient(circle,rgba(212,90,58,0.5),rgba(212,90,58,0.05) 70%)',
+  '土':'radial-gradient(circle,rgba(201,164,75,0.5),rgba(201,164,75,0.05) 70%)'
+};
+
+/* 十二神 (木宫) */
+const CARDS_SHEN = [
+  {name:'天乙',dz:1,jx:'ji'},{name:'太阳',dz:4,jx:'ji'},
+  {name:'月仙',dz:6,jx:'ji'},{name:'福德',dz:12,jx:'ji'},
+  {name:'太岁',dz:3,jx:'xiong'},{name:'官符',dz:7,jx:'xiong'},
+  {name:'赤口',dz:10,jx:'xiong'},{name:'病符',dz:2,jx:'xiong'},
+  {name:'小耗',dz:8,jx:'ping'},{name:'大耗',dz:9,jx:'ping'},
+  {name:'司命',dz:11,jx:'ping'},{name:'丧门',dz:5,jx:'ping'}
+];
+/* 十二将 (火宫) */
+const CARDS_JIANG = [
+  {name:'贵人',dz:2,jx:'ji'},{name:'青龙',dz:3,jx:'ji'},
+  {name:'天后',dz:12,jx:'ji'},{name:'太常',dz:8,jx:'ji'},
+  {name:'朱雀',dz:7,jx:'xiong'},{name:'勾陈',dz:5,jx:'xiong'},
+  {name:'太阴',dz:10,jx:'xiong'},{name:'六合',dz:4,jx:'xiong'},
+  {name:'玄武',dz:1,jx:'ping'},{name:'白虎',dz:9,jx:'ping'},
+  {name:'腾蛇',dz:6,jx:'ping'},{name:'天空',dz:11,jx:'ping'}
+];
+/* 十二景 (金宫) */
+const CARDS_JING = [
+  {name:'墨池',dz:1,jx:'ji'},{name:'琼林',dz:4,jx:'ji'},
+  {name:'星台',dz:7,jx:'ji'},{name:'寺钟',dz:10,jx:'ji'},
+  {name:'公门',dz:3,jx:'xiong'},{name:'名都',dz:6,jx:'xiong'},
+  {name:'大驿',dz:9,jx:'xiong'},{name:'悬河',dz:12,jx:'xiong'},
+  {name:'草市',dz:5,jx:'ping'},{name:'柳岸',dz:2,jx:'ping'},
+  {name:'关塞',dz:11,jx:'ping'},{name:'田园',dz:8,jx:'ping'}
+];
+/* 十二星 (土宫) */
+const CARDS_XING = [
+  {name:'天贵星',dz:1,jx:'ji'},{name:'天权星',dz:6,jx:'ji'},
+  {name:'天福星',dz:11,jx:'ji'},{name:'天寿星',dz:2,jx:'ji'},
+  {name:'天机星',dz:5,jx:'xiong'},{name:'天文星',dz:8,jx:'xiong'},
+  {name:'天驿星',dz:7,jx:'xiong'},{name:'天艺星',dz:4,jx:'xiong'},
+  {name:'天厄星',dz:12,jx:'ping'},{name:'天破星',dz:3,jx:'ping'},
+  {name:'天刃星',dz:9,jx:'ping'},{name:'天孤星',dz:10,jx:'ping'}
+];
+/* 十二运 (水宫) */
+const CARDS_YUN = [
+  {name:'胎',dz:1,jx:'ji'},{name:'长生',dz:3,jx:'ji'},
+  {name:'帝旺',dz:7,jx:'ji'},{name:'墓库',dz:11,jx:'ji'},
+  {name:'冠带',dz:5,jx:'xiong'},{name:'养',dz:2,jx:'xiong'},
+  {name:'衰暮',dz:8,jx:'xiong'},{name:'临官',dz:6,jx:'xiong'},
+  {name:'沐浴',dz:4,jx:'ping'},{name:'游丝',dz:9,jx:'ping'},
+  {name:'死归',dz:10,jx:'ping'},{name:'绝',dz:12,jx:'ping'}
+];
+
+/* 十二星牌面含义 */
+const XING_MEANING = {
+  '天贵星':'志气不凡，聪明达变，阴私算计，福禄安享。',
+  '天权星':'刚强决断，自由冒险，乐观远见，权势威严。',
+  '天福星':'心高神明，大度热情，享乐虚荣，财丁两旺。',
+  '天寿星':'仁慈温良，淡泊名利，灵感浪漫，长寿健康。',
+  '天机星':'多谋善言，才艺优雅，交游豪爽，异性缘佳。',
+  '天文星':'博学功名，细心敏锐，多情纠结，附从权贵。',
+  '天驿星':'善良心软，奔波劳碌，花前月下，离家背祖。',
+  '天艺星':'果断自我，善于开创，多才多艺，技术立身。',
+  '天厄星':'耐心负责，忧郁内敛，吃苦节俭，带疾延寿。',
+  '天破星':'刚愎自用，激情极端，多做少成，财帛耗散。',
+  '天刃星':'刚强好动，实干变革，言辞锐利，感官享乐。',
+  '天孤星':'敏捷多变，清高不群，动中求财，浮沉幻灭。'
+};
+
+/* 灵根映射 */
+const ROOT_MAP = {
+  '土':{name:'宿命灵根',path:'时轮'},
+  '木':{name:'感通灵根',path:'术士'},
+  '水':{name:'御气灵根',path:'剑修'},
+  '火':{name:'智慧灵根',path:'悟道'},
+  '金':{name:'炼形灵根',path:'体修'}
+};
+
+/* 品阶映射 */
+function getRank(score){
+  if(score<=1.5)return'萌芽';
+  if(score<=2.0)return'中品初阶';
+  if(score<=2.5)return'中品中阶';
+  if(score<=3.0)return'中品上等';
+  if(score<=3.5)return'上品初阶';
+  if(score<=4.0)return'上品中阶';
+  if(score<=4.5)return'上品上等';
+  return'灵力爆表';
+}
+
+/* ===== 7道测试题 ===== */
+const QUESTIONS = [
+  {
+    title:'你天生身负灵韵，慧根初显，自带修仙道缘。若可先天习得一门无上神通，你最心向往之的能力是？',
+    tag:'奠基 · 先天',
+    options:[
+      {label:'逆转光阴，穿梭三世，执掌岁月时序',wx:'土'},
+      {label:'感应灵机，通晓天道，参悟世间天机',wx:'木'},
+      {label:'御气随心，身法灵动，破局无孔不入',wx:'水'},
+      {label:'天资卓慧，才情盖世，扬名九天四海',wx:'火'},
+      {label:'金丹塑体，肉身坚凝，百邪兵刃难侵',wx:'金'}
+    ]
+  },
+  {
+    title:'时不我待，你尘缘渐了、道心初醒，决心辞别凡俗、踏仙寻道，前往何处寻访隐世仙师，拜入真仙门下？',
+    tag:'十二景 · 金宫',
+    options:[
+      {label:'万古冻土墟渊，坐镇山河地脉',wx:'土'},
+      {label:'青苍幽谷深林，蕴育万物灵机',wx:'木'},
+      {label:'浩渺沧海瀛洲，收纳百川道韵',wx:'水'},
+      {label:'赤焰霞光穹峰，燃点本心道火',wx:'火'},
+      {label:'玄铁寒锋剑台，凝练金刚仙骨',wx:'金'}
+    ]
+  },
+  {
+    title:'踏过千山万水，终至仙界南天门阙，云海翻涌、仙雾缭绕。一位白衣师兄凌空接应，言道早已算定你今日悟道前来。凡身未筑基者不得擅入仙域，需借一件护身灵宝破除凡障，你会择取哪一件随身前行？',
+    tag:'十二运 · 水宫',
+    options:[
+      {label:'厚土灵印，稳心镇身，固住修行道基',wx:'土'},
+      {label:'青芜灵佩，生生不息，滋养灵根经脉',wx:'木'},
+      {label:'流澜玉珠，运化气息，化解前路阻滞',wx:'水'},
+      {label:'赤曜灵灯，驱散虚妄，照破仙途迷雾',wx:'火'},
+      {label:'锋罡玉珏，抵御邪扰，铸就不坏仙躯',wx:'金'}
+    ]
+  },
+  {
+    title:'借灵宝之力破开仙门结界，随师兄踏云入仙域，穿过云海仙廊、琼楼玉宇，终于得见隐居多年的仙师。云雾环绕其身，仙光流转周身，在你眼中，师尊此刻仿若何种仙姿道态？',
+    tag:'十二将 · 火宫',
+    options:[
+      {label:'沉稳如土，承载万象，包容世间大道',wx:'土'},
+      {label:'温润如木，清雅长青，身带勃勃生机',wx:'木'},
+      {label:'洒脱如水，随性通透，看破世事浮沉',wx:'水'},
+      {label:'坦荡如火，霞光浩然，自带炽热锋芒',wx:'火'},
+      {label:'凌厉如金，清冷刚正，身具凛然道威',wx:'金'}
+    ]
+  },
+  {
+    title:'仙师眸光澄澈，看透你一身凡心与道缘，含笑开口欲考校你的道心悟性：凡尘俗世数十载，烟火人间万般景，于漫漫修仙长路而言，这人间世界，在你心中最是何种模样？',
+    tag:'根本 · 后天',
+    options:[
+      {label:'尘世厚土，沉淀岁月，是修行悟道之根基',wx:'土'},
+      {label:'山海生息，枯荣轮转，是道心生机本源',wx:'木'},
+      {label:'世事流水，起落无常，是悟道机缘百态',wx:'水'},
+      {label:'人间烟火，明暗相生，淬炼赤诚道心',wx:'火'},
+      {label:'凡尘砺行，磨心炼骨，试炼真我道途',wx:'金'}
+    ]
+  },
+  {
+    title:'听闻你的道心感悟，仙师抚掌大笑，赞你天资卓绝、悟性非凡，道根已然初成。为助你筑基悟道、精进仙途，特意赠予你一件专属修炼至宝，你心中笃定，此物会是何种灵物？',
+    tag:'十二神 · 木宫',
+    options:[
+      {label:'混沌土灵玉，稳固灵台，筑牢万古道基',wx:'土'},
+      {label:'万生灵木簪，引纳灵气，永续自身道运',wx:'木'},
+      {label:'千川凝露瓶，调和气息，破除修行瓶颈',wx:'水'},
+      {label:'南明离火扇，燃尽心魔，扫平修行阻碍',wx:'火'},
+      {label:'玄金镇岳剑，斩除虚妄，凝炼金刚仙骨',wx:'金'}
+    ]
+  },
+  {
+    title:'得仙师赐宝、踏正道仙途，自此日夜苦修、潜心悟道，褪去凡胎、渐生仙韵。你深知仙途漫漫、机缘难得，而自己能勘破道机、入道修仙，最核心的先天本心与道韵内核，终归是？',
+    tag:'十二星 · 土宫',
+    options:[
+      {label:'沉心稳进，厚积薄发，笃守本心道基',wx:'土'},
+      {label:'柔韧向阳，生生不息，逆境亦可新生',wx:'木'},
+      {label:'通透善变，顺势而为，灵活化解困局',wx:'水'},
+      {label:'热忱果敢，心怀星火，一往无前悟道',wx:'火'},
+      {label:'刚毅守正，内敛锋芒，坚定道骨初心',wx:'金'}
+    ]
+  }
+];
+
+/* ===== 状态 ===== */
+let currentQ = 0;
+let answers = [];
+
+/* ===== 视图切换 ===== */
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function startQuiz(){
+  currentQ = 0;
+  answers = [];
+  renderQuestion();
+  showView('view-quiz');
+}
+
+function restart(){
+  showView('view-home');
+}
+
+/* ===== 渲染题目 ===== */
+function renderQuestion(){
+  const q = QUESTIONS[currentQ];
+  document.getElementById('quiz-step').textContent = `第 ${currentQ+1} / ${QUESTIONS.length} 问`;
+  document.getElementById('progress-bar').style.width = ((currentQ+1)/QUESTIONS.length*100)+'%';
+  document.getElementById('btn-prev').disabled = currentQ === 0;
+
+  const card = document.getElementById('question-card');
+  card.classList.remove('fade-in');
+  void card.offsetWidth;
+  card.classList.add('fade-in');
+
+  document.getElementById('question-title').innerHTML =
+    `<span class="q-tag">${q.tag}</span>${q.title}`;
+
+  const list = document.getElementById('option-list');
+  list.innerHTML = '';
+  const letters = ['A','B','C','D','E'];
+  q.options.forEach((opt,i)=>{
+    const div = document.createElement('div');
+    div.className = 'option-item';
+    div.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt.label}</span>`;
+    div.onclick = ()=>selectOption(i);
+    list.appendChild(div);
+  });
+}
+
+function selectOption(idx){
+  answers[currentQ] = idx;
+  if(currentQ < QUESTIONS.length - 1){
+    currentQ++;
+    renderQuestion();
+  }else{
+    calculateResult();
+  }
+}
+
+function prevQuestion(){
+  if(currentQ > 0){
+    currentQ--;
+    renderQuestion();
+  }
+}
+
+/* ===== 抽牌：按五行从指定系列中随机抽 ===== */
+function drawCard(series, wx){
+  const pool = series.filter(c=>WUXING[c.dz]===wx);
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+/* ===== 计算结果 ===== */
+function calculateResult(){
+  // 第2题=十二景(金宫), 第3题=十二运(水宫), 第4题=十二将(火宫), 第6题=十二神(木宫), 第7题=十二星(土宫)
+  const cardJing = drawCard(CARDS_JING, QUESTIONS[1].options[answers[1]].wx);
+  const cardYun = drawCard(CARDS_YUN, QUESTIONS[2].options[answers[2]].wx);
+  const cardJiang = drawCard(CARDS_JIANG, QUESTIONS[3].options[answers[3]].wx);
+  const cardShen = drawCard(CARDS_SHEN, QUESTIONS[5].options[answers[5]].wx);
+  const cardXing = drawCard(CARDS_XING, QUESTIONS[6].options[answers[6]].wx);
+
+  const drawnCards = {jing:cardJing, yun:cardYun, jiang:cardJiang, shen:cardShen, xing:cardXing};
+
+  // 五行统计：1、5题权重2倍，其余按抽到的牌地支五行
+  const wxCount = {金:0,木:0,水:0,火:0,土:0};
+  wxCount[QUESTIONS[0].options[answers[0]].wx] += 2; // 第1题
+  wxCount[QUESTIONS[4].options[answers[4]].wx] += 2; // 第5题
+  [cardJing,cardYun,cardJiang,cardShen,cardXing].forEach(c=>{
+    wxCount[WUXING[c.dz]] += 1;
+  });
+
+  // 确定主灵根
+  const sorted = Object.entries(wxCount).sort((a,b)=>b[1]-a[1]);
+  const maxVal = sorted[0][1];
+  const mains = sorted.filter(x=>x[1]===maxVal && x[1]>0).map(x=>x[0]);
+  let rootType, rootInfo;
+  if(mains.length===1){
+    rootType = mains[0]+'系';
+    rootInfo = ROOT_MAP[mains[0]];
+  }else if(mains.length===2){
+    rootType = mains.join('')+'双系';
+    rootInfo = ROOT_MAP[mains[0]];
+  }else{
+    rootType = '多系';
+    rootInfo = ROOT_MAP[mains[0]];
+  }
+
+  // 品阶：5张牌吉凶计分
+  const jxScore = {ji:1,ping:0.5,xiong:0};
+  const totalScore = [cardJing,cardYun,cardJiang,cardShen,cardXing]
+    .reduce((s,c)=>s+jxScore[c.jx],0);
+  const rank = getRank(totalScore);
+
+  // 渲染灵根灵体
+  const mainWx = mains[0];
+  document.getElementById('spirit-aura').style.background = WUXING_AURA[mainWx];
+  document.getElementById('spirit-body').style.background = WUXING_AURA[mainWx];
+  document.getElementById('spirit-body').style.border = `1px solid ${WUXING_COLOR[mainWx]}`;
+  document.getElementById('result-root-name').textContent = `${rootType} · ${rootInfo.name}`;
+  document.getElementById('result-root-path').textContent = `修行之路：${rootInfo.path}`;
+  document.getElementById('result-root-rank').textContent = `品阶：${rank}（灵韵值 ${totalScore.toFixed(1)}/5.0）`;
+
+  // 灵根解读
+  document.getElementById('report-root').innerHTML =
+    `经洛书问心推演，你的本命灵根为<span class="gold-text" style="font-weight:700">${rootType}</span>，品阶<span class="gold-text" style="font-weight:700">【${rank}】</span>，本命灵根：${rootInfo.name}，主修道途为<span class="cyan-text">${rootInfo.path}</span>。先天与后天心性相互交织，塑造你独有的修行禀赋。`;
+
+  // 先天慧根（第1题）
+  const innateWx = QUESTIONS[0].options[answers[0]].wx;
+  const innateDesc = {
+    '土':'你灵魂本源向往执掌岁月时序，天生具备沉稳厚重的底蕴，善于沉淀与积累，是大器晚成之相。',
+    '木':'你灵魂本源向往感应天地灵机，天生敏锐通透，善于洞察事物本质，具备超凡的直觉与悟性。',
+    '水':'你灵魂本源向往御气随心，天生灵动变通，善于把握机遇，能在复杂局面中找到破局之道。',
+    '火':'你灵魂本源向往才情盖世，天生热情洋溢，具备强大的感染力与领导力，是人群中的焦点。',
+    '金':'你灵魂本源向往金丹塑体，天生坚毅果敢，具备强大的执行力与抗压能力，能在磨砺中愈加强大。'
+  };
+  document.getElementById('report-innate').innerHTML =
+    `<span class="field-label">先天选择【${innateWx}行】：</span>${innateDesc[innateWx]}`;
+
+  // 后天悟性（第5题）
+  const acquiredWx = QUESTIONS[4].options[answers[4]].wx;
+  const acquiredDesc = {
+    '土':'你视人间为沉淀岁月的厚土，在凡尘中积累阅历与智慧，越沉淀越深厚，是修行悟道的根基所在。',
+    '木':'你视人间为枯荣轮转的山海，在变化中感受生机与希望，总能在逆境中找到新生的力量。',
+    '水':'你视人间为起落无常的流水，在世事变幻中保持通透，善于顺势而为，将困境化为机缘。',
+    '火':'你视人间为明暗相生的烟火，在纷繁中淬炼赤诚之心，越经历越坚定，热情是你最大的道心。',
+    '金':'你视人间为磨心炼骨的砺石，在挫折中不断锤炼自我，每一次磨难都让你更加坚不可摧。'
+  };
+  document.getElementById('report-acquired').innerHTML =
+    `<span class="field-label">后天感悟【${acquiredWx}行】：</span>${acquiredDesc[acquiredWx]}`;
+
+  // 洛书牌局
+  renderLuoshu(drawnCards);
+
+  // 性格定位（以十二星为主）
+  const xingMeaning = XING_MEANING[cardXing.name] || '';
+  document.getElementById('report-personality').innerHTML =
+    `命宫主星为<span class="gold-text">${cardXing.name}</span>（${DIZHI[cardXing.dz]}${WUXING[cardXing.dz]}）。${xingMeaning}<br><br>`+
+    `结合地支${DIZHI[cardXing.dz]}之性与牌局整体流转，你的性格底色为：在${mains.join('、')}行之力的滋养下，${getPersonalityDesc(mains, cardXing)}`;
+
+  // 天赋定位
+  renderTalent(drawnCards, mains);
+
+  // 职业定位
+  renderCareer(mains, rootInfo.path);
+
+  showView('view-result');
+}
+
+/* ===== 渲染洛书牌局 ===== */
+function renderLuoshu(cards){
+  const grid = document.getElementById('luoshu-grid');
+  grid.innerHTML = '';
+  // 九宫格布局：上=火宫(十二将), 下=水宫(十二运), 左=木宫(十二神), 右=金宫(十二景), 中=土宫(十二星)
+  const layout = [
+    {pos:'上',series:'十二将',card:cards.jiang},
+    {pos:'左上',series:'',card:null},
+    {pos:'右上',series:'',card:null},
+    {pos:'左',series:'十二神',card:cards.shen},
+    {pos:'中',series:'十二星',card:cards.xing},
+    {pos:'右',series:'十二景',card:cards.jing},
+    {pos:'左下',series:'',card:null},
+    {pos:'下',series:'十二运',card:cards.yun},
+    {pos:'右下',series:'',card:null}
+  ];
+  const jxLabel = {ji:'吉',ping:'平',xiong:'凶'};
+  layout.forEach(item=>{
+    const cell = document.createElement('div');
+    if(item.card){
+      cell.className = `luoshu-cell ${item.card.jx}` + (item.pos==='中'?' luoshu-center':'');
+      cell.innerHTML = `
+        <div class="card-series">${item.series}</div>
+        <div class="card-name">${item.card.name}</div>
+        <div class="card-meta">${DIZHI[item.card.dz]}·${WUXING[item.card.dz]}·${jxLabel[item.card.jx]}</div>
+      `;
+    }else{
+      cell.className = 'luoshu-cell';
+      cell.style.opacity = '0.25';
+      cell.style.borderStyle = 'dashed';
+    }
+    grid.appendChild(cell);
+  });
+}
+
+/* ===== 性格描述 ===== */
+function getPersonalityDesc(mains, xingCard){
+  const descs = {
+    '土':'为人稳重踏实，有强烈的责任感与担当，做事循序渐进、厚积薄发，是值得信赖的依靠。',
+    '木':'性情温润柔韧，富有同理心与创造力，善于生长与适应，在任何环境中都能找到自己的位置。',
+    '水':'思维灵活变通，善于沟通与协调，能屈能伸，在复杂的人际关系中游刃有余。',
+    '火':'热情奔放，充满活力与感染力，行动力强，敢于追求梦想，是天生的激励者与引领者。',
+    '金':'刚毅果决，原则性强，具备出色的执行力与判断力，在压力面前愈战愈勇。'
+  };
+  return mains.map(m=>descs[m]).join('');
+}
+
+/* ===== 天赋定位 ===== */
+function renderTalent(cards, mains){
+  // 五宫天赋维度
+  const talents = [
+    {name:'注意力',val:scoreTalent(cards.jiang)},
+    {name:'内觉知',val:scoreTalent(cards.jiang, true)},
+    {name:'意志力',val:scoreTalent(cards.yun)},
+    {name:'想象力',val:scoreTalent(cards.shen)},
+    {name:'感知力',val:scoreTalent(cards.jing)},
+    {name:'判断力',val:scoreTalent(cards.xing)}
+  ];
+  const bars = document.getElementById('talent-bars');
+  bars.innerHTML = '';
+  talents.forEach(t=>{
+    const pct = (t.val/3*100).toFixed(0);
+    const row = document.createElement('div');
+    row.className = 'talent-bar-row';
+    row.innerHTML = `
+      <span class="talent-bar-label">${t.name}</span>
+      <div class="talent-bar-track"><div class="talent-bar-fill" style="width:${pct}%"></div></div>
+      <span class="talent-bar-val">${t.val.toFixed(1)}</span>
+    `;
+    bars.appendChild(row);
+  });
+
+  // 核心天赋解读
+  const topTalent = talents.sort((a,b)=>b.val-a.val)[0];
+  const talentDesc = {
+    '注意力':'你具备出色的专注力，能够长时间沉浸在复杂任务中，不易被外界干扰。',
+    '内觉知':'你对自身情绪与状态有敏锐的觉察，善于自省与调整，内心世界丰富而深邃。',
+    '意志力':'你拥有坚定的意志与持久的耐力，一旦确立目标便能坚持不懈，是典型的长跑型选手。',
+    '想象力':'你思维开阔、富有创意，能看到别人看不到的可能性，是天生的创意生产者。',
+    '感知力':'你对环境与他人情绪有敏锐的感知，善于捕捉细节与变化，直觉精准。',
+    '判断力':'你具备冷静理性的分析能力，能在复杂信息中快速抓住关键，做出明智决策。'
+  };
+  document.getElementById('report-talent').innerHTML =
+    `<span class="field-label">核心天赋：${topTalent.name}</span>${talentDesc[topTalent.name]}<br><br>`+
+    `<span class="field-label">你的优势：</span>在${mains.join('、')}行灵根的加持下，你在${topTalent.name}方面表现突出，能够将天赋转化为实际成果。<br><br>`+
+    `<span class="field-label">职场应用：</span>适合需要深度专注与独立思考的工作场景，在团队中往往是解决复杂问题的关键人物。`;
+}
+
+function scoreTalent(card, second){
+  const base = {ji:3,ping:2,xiong:1};
+  let val = base[card.jx];
+  if(second) val = val * 0.8 + 0.3;
+  return Math.min(3, val);
+}
+
+/* ===== 职业定位 ===== */
+function renderCareer(mains, path){
+  const careerPool = {
+    '土':[
+      {name:'项目管理',score:92,desc:'稳重踏实、善于统筹，能把控复杂项目的全流程。',advice:'提升跨部门沟通能力，向高级项目经理发展。'},
+      {name:'财务审计',score:88,desc:'细心严谨、有原则性，适合与数字和规则打交道。',advice:'考取专业资质，向财务总监方向进阶。'},
+      {name:'人力资源',score:85,desc:'有责任感、善于识人，能在组织中发挥稳定器作用。',advice:'加强战略思维，从执行层向决策层转变。'},
+      {name:'建筑工程',score:83,desc:'脚踏实地、注重根基，适合需要长期积累的行业。',advice:'关注技术创新，拥抱数字化转型。'},
+      {name:'农业食品',score:80,desc:'尊重自然、有耐心，适合与土地和生长相关的领域。',advice:'结合品牌化运营，提升产品附加值。'}
+    ],
+    '木':[
+      {name:'教育培训',score:93,desc:'温润有耐心、善于启发，天生适合传道授业。',advice:'打造个人IP，向知识IP方向发展。'},
+      {name:'文化创意',score:90,desc:'富有创造力与审美，能在内容领域持续产出。',advice:'建立稳定的创作节奏与商业闭环。'},
+      {name:'心理咨询',score:87,desc:'同理心强、善于倾听，能给予他人温暖与支持。',advice:'持续专业进修，建立个人督导体系。'},
+      {name:'设计艺术',score:85,desc:'审美敏锐、表达力强，适合视觉与创意工作。',advice:'平衡艺术追求与商业需求。'},
+      {name:'公益慈善',score:82,desc:'心怀善意、有使命感，适合非营利领域。',advice:'学习组织运营，提升项目影响力。'}
+    ],
+    '水':[
+      {name:'市场营销',score:92,desc:'灵活变通、善于沟通，能在变化中捕捉机会。',advice:'深耕数据驱动营销，提升策略高度。'},
+      {name:'公关传播',score:90,desc:'口才出众、反应敏捷，适合处理复杂关系。',advice:'建立个人品牌与行业资源网络。'},
+      {name:'销售商务',score:88,desc:'善于洞察需求、灵活应变，是天生的谈判者。',advice:'从个人销售向团队管理转型。'},
+      {name:'互联网产品',score:85,desc:'思维活跃、善于迭代，适合快速变化的行业。',advice:'加强技术理解，提升产品决策力。'},
+      {name:'旅游酒店',score:82,desc:'热情周到、适应力强，适合服务与人打交道。',advice:'关注体验经济，打造差异化服务。'}
+    ],
+    '火':[
+      {name:'创业经营',score:94,desc:'热情果敢、有领导力，天生适合开疆拓土。',advice:'注重风险控制，搭建稳定的团队体系。'},
+      {name:'媒体演艺',score:91,desc:'表现力强、有感染力，适合聚光灯下的舞台。',advice:'深耕专业领域，避免过度消耗。'},
+      {name:'演讲培训',score:89,desc:'口才出众、激励人心，能点燃他人的热情。',advice:'打造课程体系，从单次演讲向产品化发展。'},
+      {name:'活动策划',score:86,desc:'创意丰富、执行力强，适合大型项目统筹。',advice:'建立标准化流程，提升可复制性。'},
+      {name:'体育健身',score:83,desc:'活力充沛、意志坚定，适合运动与健康领域。',advice:'结合科技手段，拓展服务边界。'}
+    ],
+    '金':[
+      {name:'法律合规',score:93,desc:'理性严谨、原则性强，适合规则与秩序领域。',advice:'深耕细分行业，成为领域专家。'},
+      {name:'金融投资',score:90,desc:'冷静果断、判断力强，适合与风险和收益博弈。',advice:'建立系统的投资框架与风控体系。'},
+      {name:'工程技术',score:88,desc:'逻辑清晰、执行力强，适合技术攻坚与落地。',advice:'关注技术趋势，保持学习敏锐度。'},
+      {name:'医疗健康',score:85,desc:'细致严谨、有担当，适合需要精准判断的领域。',advice:'平衡工作强度，关注自身健康。'},
+      {name:'军警安保',score:82,desc:'刚毅果敢、有纪律性，适合需要执行力的岗位。',advice:'拓展管理能力，向指挥岗位发展。'}
+    ]
+  };
+
+  // 从主灵根对应的职业池中取5个
+  const pool = careerPool[mains[0]] || careerPool['土'];
+  const list = document.getElementById('career-list');
+  list.innerHTML = '';
+  pool.forEach(c=>{
+    const div = document.createElement('div');
+    div.className = 'career-item';
+    div.innerHTML = `
+      <div class="career-head">
+        <span class="career-name">${c.name}</span>
+        <span class="career-score">适配 ${c.score}%</span>
+      </div>
+      <div class="career-desc">${c.desc}<br><span style="color:var(--cyan-light)">发展建议：${c.advice}</span></div>
+    `;
+    list.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>
